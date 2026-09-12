@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <!-- Importa a biblioteca A-Frame -->
+  <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
+  <!-- Importa o MindAR para A-Frame -->
+  <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
+  
+  <style>
+    /* Estilo do botão para liberar o áudio/vídeo nos celulares */
+    #play-btn {
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 999;
+      padding: 14px 28px;
+      background-color: #000;
+      color: #fff;
+      border: none;
+      border-radius: 30px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    }
+  </style>
+</head>
+<body style="margin: 0; overflow: hidden;">
+
+  <!-- Botão necessário por causa do bloqueio de áudio automático no iOS e Android -->
+  <button id="play-btn">Toque para Ativar AR</button>
+
+  <a-scene 
+    mindar-image="imageTargetSrc: ./targets.mind;" 
+    color-space="sRGB" 
+    renderer="colorManagement: true, physicallyCorrectLights" 
+    vr-mode-ui="enabled: false" 
+    device-orientation-permission-ui="enabled: false">
+    
+    <a-assets>
+      <!-- Carrega o vídeo -->
+      <video id="cardVideo" src="./video.mp4" preload="auto" loop webkit-playsinline playsinline></video>
+    </a-assets>
+
+    <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
+
+    <!-- Associa o alvo (target 0) ao vídeo -->
+    <a-entity mindar-image-target="targetIndex: 0">
+      <!-- Ajuste a largura (width) e altura (height) conforme a proporção da sua foto -->
+      <a-video src="#cardVideo" width="1" height="1.5" position="0 0 0"></a-video>
+    </a-entity>
+  </a-scene>
+
+  <script>
+    const video = document.querySelector('#cardVideo');
+    const button = document.querySelector('#play-btn');
+
+    button.addEventListener('click', () => {
+      video.play();
+      button.style.display = 'none'; // Esconde o botão após liberar o vídeo
+    });
+  </script>
+</body>
+</html>
