@@ -6,9 +6,9 @@
   <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
   <!-- Importa o MindAR para A-Frame -->
   <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
-  
+
   <style>
-    /* Estilo do botão para liberar o áudio/vídeo nos celulares */
+    /* Estilo do botão para liberar o vídeo/áudio no celular */
     #play-btn {
       position: fixed;
       bottom: 30px;
@@ -29,7 +29,7 @@
 </head>
 <body style="margin: 0; overflow: hidden;">
 
-  <!-- Botão necessário por causa do bloqueio de áudio automático no iOS e Android -->
+  <!-- Botão para liberar o áudio e a reprodução automática no iOS/Android -->
   <button id="play-btn">Toque para Ativar AR</button>
 
   <a-scene 
@@ -40,26 +40,41 @@
     device-orientation-permission-ui="enabled: false">
     
     <a-assets>
-      <!-- Carrega o vídeo -->
-      <video id="cardVideo" src="./video.mp4" preload="auto" loop webkit-playsinline playsinline></video>
+      <!-- 
+        NOVIDADE: 'crossorigin="anonymous"' corrigido para evitar o quadrado preto.
+        Certifique-se de que o arquivo no GitHub se chama exatamente "video1.mp4"
+      -->
+      <video 
+        id="video1" 
+        src="./video1.mp4" 
+        crossorigin="anonymous" 
+        preload="auto" 
+        loop 
+        webkit-playsinline 
+        playsinline>
+      </video>
     </a-assets>
 
     <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
 
-    <!-- Associa o alvo (target 0) ao vídeo -->
+    <!-- Photocard 1 (Aponte para a 1ª foto do targets.mind) -->
     <a-entity mindar-image-target="targetIndex: 0">
-      <!-- Ajuste a largura (width) e altura (height) conforme a proporção da sua foto -->
-      <a-video src="#cardVideo" width="1" height="1.5" position="0 0 0"></a-video>
+      <a-video src="#video1" width="1" height="1.5" position="0 0 0"></a-video>
     </a-entity>
+
   </a-scene>
 
   <script>
-    const video = document.querySelector('#cardVideo');
-    const button = document.querySelector('#play-btn');
+    const playBtn = document.querySelector('#play-btn');
+    const videos = document.querySelectorAll('video');
 
-    button.addEventListener('click', () => {
-      video.play();
-      button.style.display = 'none'; // Esconde o botão após liberar o vídeo
+    playBtn.addEventListener('click', () => {
+      // Toca todos os vídeos para pré-carregar as permissões do navegador
+      videos.forEach(video => {
+        video.play().catch(err => console.log('Aguardando interação:', err));
+      });
+      // Esconde o botão após o clique
+      playBtn.style.display = 'none';
     });
   </script>
 </body>
